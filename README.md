@@ -5,33 +5,27 @@ Code Project Description
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 
-/* ---------- LCD ---------- */
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-/* ---------- GSM & GPS ---------- */
 SoftwareSerial gsm(2, 3);
 SoftwareSerial gpsSerial(4, 5);
 TinyGPSPlus gps;
 
-/* ---------- Pins ---------- */
 #define MQ3 A0
 #define LED 7
 
-/* ---------- Variables ---------- */
 int alcoholThreshold = 500;
 bool alertSent = false;
 
 float latitude = 0.0;
 float longitude = 0.0;
 
-/* ---------- Police Station Numbers ---------- */
-String policeStationNumber = "+91XXXXXXXXXX"; // default
+String policeStationNumber = "+91XXXXXXXXXX";
 
 String police1 = "+91AAAAAAAAAA";
 String police2 = "+91BBBBBBBBBB";
 String police3 = "+91CCCCCCCCCC";
 
-/* ---------- Setup ---------- */
 void setup() {
 
   pinMode(LED, OUTPUT);
@@ -53,10 +47,9 @@ void setup() {
   lcd.clear();
 }
 
-/* ---------- Main Loop ---------- */
 void loop() {
 
-  readGPS();   // update GPS location
+  readGPS();
 
   int alcoholValue = analogRead(MQ3);
 
@@ -77,7 +70,7 @@ void loop() {
 
     if (!alertSent) {
 
-      selectPoliceStation();  // NEW FUNCTION
+      selectPoliceStation();
       sendLocationSMS();
 
       alertSent = true;
@@ -97,7 +90,6 @@ void loop() {
   delay(1000);
 }
 
-/* ---------- GPS Function ---------- */
 void readGPS() {
 
   while (gpsSerial.available()) {
@@ -117,7 +109,6 @@ void readGPS() {
   }
 }
 
-/* ---------- Zone Based Police Selection ---------- */
 void selectPoliceStation() {
 
   if(latitude >= 13.00 && latitude <= 13.10) {
@@ -134,7 +125,6 @@ void selectPoliceStation() {
 
 }
 
-/* ---------- SMS Function ---------- */
 void sendLocationSMS() {
 
   lcd.clear();
@@ -167,7 +157,7 @@ void sendLocationSMS() {
     gsm.println("Location not available.");
   }
 
-  gsm.write(26); // CTRL+Z
+  gsm.write(26);
   delay(3000);
 
   lcd.clear();
